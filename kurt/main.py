@@ -1,33 +1,56 @@
-import json
-from urllib.parse import urlparse
-from hellen import fetch_all_links, handle_links, is_internal_link
-from virginia import check_page_availability
+from kurt.process_links import process_links, is_internal_link
 
-def process_links(base_url):
-    page_links = fetch_all_links(base_url=base_url)
-    if page_links == "ERROR: base url unavailable":
-        return base_url, page_links
-    links = handle_links(base_url=base_url, page_links=page_links)
-
-    # Build list with availability information and internal link status
-    result_links = []
-    for link in links:
-        availability = check_page_availability(link)
-        is_internal = is_internal_link(base_url, link)
-        result_links.append({"url": link, "availability": availability, "is_internal": is_internal})
-
-    return base_url, result_links
+def crawl_website(base_url, max_depth):
+    """
+    Crawl the website starting from base_url up to max_depth levels deep.
+    
+    Parameters:
+    base_url (str): The base URL to start crawling from.
+    max_depth (int): The maximum depth to crawl.
+    
+    Returns:
+    dict: A dictionary where each link is a key with its properties and crawl depth.
+    """
+    crawled = {}
+    
+    def crawl(url, depth):
+        print(f"Crawling URL: {url} at depth: {depth}")
+        if depth > max_depth:
+            print(f"Reached max depth at URL: {url}")
+            return
+        base_url, result_links = process_links(url)
+        print(f"Processed {len(result_links)} links from {url}")
+        
+        for link_info in result_links:
+            link = link_info['url']
+            if link not in crawled:
+                crawled[link] = {
+                    "availability": link_info['availability'],
+                    "is_internal": link_info['is_internal'],
+                    "found_in": [],
+                    "depth": depth
+                }
+            crawled[link]["found_in"].append(base_url)
+            
+            if link_info['is_internal'] and link_info['availability']:
+                print(f"Recursively crawling internal link: {link}")
+                crawl(link, depth + 1)
+            else:
+                print(f"Skipping link: {link} (Internal: {link_info['is_internal']}, Available: {link_info['availability']})")
+    
+    crawl(base_url, 1)
+    return crawled
 
 # Example usage
 if __name__ == "__main__":
     base_url = 'https://smileup.pt'
-    base_url, result_links = process_links(base_url=base_url)
+    max_depth = 2
+    crawled_data = crawl_website(base_url, max_depth)
     
-    # Print the result
-    print(f"Base URL: {base_url}")
-    for link_info in result_links:
-        print(f"URL: {link_info['url']}, Availability: {link_info['availability']}, Is Internal: {link_info['is_internal']}")
-    
-    # Example of using is_internal_link (for future use)
-    example_link = 'https://smileup.pt/about'
-    print(f"Is the link '{example_link}' internal? {is_internal_link(base_url, example_link)}")
+    # Print the crawled data
+    for link, info in crawled_data.items():
+        print(f"Link: {link}")
+        print(f"  Availability: {info['availability']}")
+        print(f"  Is Internal: {info['is_internal']}")
+        print(f"  Found in: {info['found_in']}")
+        print(f"  Depth: {info['depth']}")

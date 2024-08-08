@@ -14,7 +14,7 @@ module
 
 __version__ = "0.1.0"
 
-from .main import some_function
+from .main import crawl_website
 
 def package_function():
     """
