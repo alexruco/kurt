@@ -1,6 +1,6 @@
-# My Python Module 🚀
+# Kurt 🚀
 
-Welcome to **My Python Module**! This project is designed to [brief description of what your module does].
+Welcome to **Kurt**! This project is designed to provide a list of links and pages existing in a website.
 
 ## Features ✨
 
