@@ -1,4 +1,42 @@
+import json
 from kurt.process_links import process_links, is_internal_link
+
+def crawl(url, depth, max_depth, crawled):
+    """
+    Recursively crawl the given URL up to max_depth levels deep.
+
+    Parameters:
+    url (str): The URL to crawl.
+    depth (int): The current depth of the crawl.
+    max_depth (int): The maximum depth to crawl.
+    crawled (dict): The dictionary to store the crawled data.
+
+    Returns:
+    None
+    """
+    print(f"Crawling URL: {url} at depth: {depth}")
+    if depth > max_depth:
+        print(f"Reached max depth at URL: {url}")
+        return
+    base_url, result_links = process_links(url)
+    print(f"Processed {len(result_links)} links from {url}")
+    
+    for link_info in result_links:
+        link = link_info['url']
+        if link not in crawled:
+            crawled[link] = {
+                "availability": link_info['availability'],
+                "is_internal": link_info['is_internal'],
+                "found_in": [],
+                "depth": depth
+            }
+        crawled[link]["found_in"].append(base_url)
+        
+        if link_info['is_internal'] and link_info['availability']:
+            print(f"Recursively crawling internal link: {link}")
+            crawl(link, depth + 1, max_depth, crawled)
+        else:
+            print(f"Skipping link: {link} (Internal: {link_info['is_internal']}, Available: {link_info['availability']})")
 
 def crawl_website(base_url, max_depth):
     """
@@ -12,33 +50,7 @@ def crawl_website(base_url, max_depth):
     dict: A dictionary where each link is a key with its properties and crawl depth.
     """
     crawled = {}
-    
-    def crawl(url, depth):
-        print(f"Crawling URL: {url} at depth: {depth}")
-        if depth > max_depth:
-            print(f"Reached max depth at URL: {url}")
-            return
-        base_url, result_links = process_links(url)
-        print(f"Processed {len(result_links)} links from {url}")
-        
-        for link_info in result_links:
-            link = link_info['url']
-            if link not in crawled:
-                crawled[link] = {
-                    "availability": link_info['availability'],
-                    "is_internal": link_info['is_internal'],
-                    "found_in": [],
-                    "depth": depth
-                }
-            crawled[link]["found_in"].append(base_url)
-            
-            if link_info['is_internal'] and link_info['availability']:
-                print(f"Recursively crawling internal link: {link}")
-                crawl(link, depth + 1)
-            else:
-                print(f"Skipping link: {link} (Internal: {link_info['is_internal']}, Available: {link_info['availability']})")
-    
-    crawl(base_url, 1)
+    crawl(base_url, 1, max_depth, crawled)
     return crawled
 
 # Example usage
