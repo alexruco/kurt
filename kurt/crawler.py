@@ -1,8 +1,8 @@
-# kurt/crawler.py
-
+from urllib.parse import urlparse
 from kurt.process_links import process_links, is_internal_link
 from virginia import check_page_availability
 from kurt.external_links_collector import collect_external_links
+from kurt.utils import no_content_extensions
 
 def crawl(url, depth, max_depth, crawled, external_links_info):
     """
@@ -19,6 +19,12 @@ def crawl(url, depth, max_depth, crawled, external_links_info):
     dict, dict: The updated crawled data dictionary and the dictionary of external links with their sources.
     """
     print(f"Crawling URL: {url} at depth: {depth}")
+
+    # Skip URLs that end with file extensions from no_content_extensions
+    parsed_url = urlparse(url)
+    if any(parsed_url.path.endswith(f".{ext}") for ext in no_content_extensions()):
+        print(f"Skipping non-content URL: {url}")
+        return crawled, external_links_info
     
     if depth > max_depth:
         print(f"Reached max depth at URL: {url}")
