@@ -18,7 +18,25 @@ def process_links(base_url):
 
     return base_url, result_links
 
+
 def is_internal_link(base_url, link):
+    """
+    Determine if a given link is internal to the base URL.
+
+    Parameters:
+    base_url (str): The base URL.
+    link (str): The link to check.
+
+    Returns:
+    bool: True if the link is internal, False otherwise.
+    """
+    # Parse the domains
+    base_domain = urlparse(base_url).netloc.lower().lstrip('www.')
+    link_domain = urlparse(link).netloc.lower().lstrip('www.')
+    
+    # Consider the link internal if it exactly matches the base domain
+    return base_domain == link_domain
+
     """
     Determine if a given link is internal to the base URL.
 

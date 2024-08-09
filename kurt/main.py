@@ -1,4 +1,4 @@
-from crawler import crawl
+from kurt.crawler import crawl
 
 def crawl_website(base_url, max_depth):
     """
