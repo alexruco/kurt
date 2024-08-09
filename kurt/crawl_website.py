@@ -25,7 +25,7 @@ if __name__ == "__main__":
     base_url = 'https://mysitefaster.com'
     max_depth = 2
     # Customize these flags as per requirement
-    crawl_internal = False
+    crawl_internal = True
     crawl_external = True
     
     crawled_data, external_links_info = crawl_website(base_url, max_depth, crawl_internal, crawl_external)
