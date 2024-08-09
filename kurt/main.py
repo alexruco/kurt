@@ -84,7 +84,7 @@ def sitemap_crawl(base_url, max_depth):
 
 # Example usage
 if __name__ == "__main__":
-    base_url = 'https://smileup.pt'
+    base_url = 'https://mysitefaster.com'
     max_depth = 2
     crawled_data = sitemap_crawl(base_url, max_depth)
     
