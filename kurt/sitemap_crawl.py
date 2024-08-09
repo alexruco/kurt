@@ -1,6 +1,3 @@
-#sitemap_crawl.py
-
-from crawler import crawl
 from dourado import pages_from_sitemaps
 
 def sitemap_crawl(base_url, max_depth):
@@ -14,6 +11,7 @@ def sitemap_crawl(base_url, max_depth):
     Returns:
     dict: A dictionary where each link is a key with its properties, internal links discovered, and sitemaps discovered.
     """
+    from crawler import crawl  # Import inside the function to avoid circular dependency
     crawled = {}
     sitemaps = pages_from_sitemaps(base_url)
 
@@ -22,11 +20,10 @@ def sitemap_crawl(base_url, max_depth):
             crawled[sitemap_url] = {
                 "internal_link_discovered": [],
                 "sitemap_discovered": sitemap_url,
-                "depth": 0  # Initialize depth
+                "depth": 1  # Initialize depth
             }
-        internal_crawled = crawl(sitemap_url, 1, max_depth, {})
-        if internal_crawled:  # Ensure internal_crawled is not None
+        internal_crawled = crawl(sitemap_url, 1, max_depth, crawled)
+        if internal_crawled:
             crawled[sitemap_url]["internal_link_discovered"].extend(internal_crawled.keys())
-        crawled[sitemap_url]["depth"] = 1  # Set depth after crawling
 
     return crawled

@@ -1,7 +1,3 @@
-#import json
-from kurt.process_links import process_links, is_internal_link
-#from dourado import pages_from_sitemaps, consolidate_sitemaps
-from crawler import crawl
 from sitemap_crawl import sitemap_crawl
 
 def crawl_website(base_url, max_depth):
@@ -15,17 +11,14 @@ def crawl_website(base_url, max_depth):
     Returns:
     dict: A dictionary where each link is a key with its properties and crawl depth.
     """
-    crawled = {}
-    return crawl(base_url, 1, max_depth, crawled)
-
+    return sitemap_crawl(base_url, max_depth)
 
 # Example usage
 if __name__ == "__main__":
     base_url = 'https://mysitefaster.com'
     max_depth = 2
-    crawled_data = sitemap_crawl(base_url, max_depth)
+    crawled_data = crawl_website(base_url, max_depth)
     
-    # Print the crawled data
     for link, info in crawled_data.items():
         print(f"Link: {link}")
         print(f"  Internal Links Discovered: {info['internal_link_discovered']}")
