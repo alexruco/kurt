@@ -1,4 +1,4 @@
-from sitemap_crawl import sitemap_crawl
+from crawler import crawl
 
 def crawl_website(base_url, max_depth):
     """
@@ -9,18 +9,26 @@ def crawl_website(base_url, max_depth):
     max_depth (int): The maximum depth to crawl.
     
     Returns:
-    dict: A dictionary where each link is a key with its properties and crawl depth.
+    dict, list: A dictionary where each link is a key with its properties and crawl depth, and a list of external links.
     """
-    return sitemap_crawl(base_url, max_depth)
+    crawled = {}
+    external_links = []
+    crawled, external_links = crawl(base_url, 1, max_depth, crawled, external_links)
+    return crawled, external_links
 
 # Example usage
 if __name__ == "__main__":
     base_url = 'https://mysitefaster.com'
     max_depth = 2
-    crawled_data = crawl_website(base_url, max_depth)
+    crawled_data, external_links = crawl_website(base_url, max_depth)
     
+    # Print the crawled data
     for link, info in crawled_data.items():
         print(f"Link: {link}")
-        print(f"  Internal Links Discovered: {info['internal_link_discovered']}")
-        print(f"  Sitemap Discovered: {info['sitemap_discovered']}")
+        print(f"  Internal Links Discovered: {info['found_in']}")
         print(f"  Depth: {info['depth']}")
+    
+    # Print external links
+    print("\nExternal Links Found:")
+    for link in external_links:
+        print(link)
