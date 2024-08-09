@@ -1,3 +1,5 @@
+#kurt/sitemap_crawl
+ 
 from dourado import pages_from_sitemaps
 
 def sitemap_crawl(base_url, max_depth):

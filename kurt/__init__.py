@@ -1,32 +1,26 @@
-# my_python_module/__init__.py
+# kurt/__init__.py
 
 """
-My Python Module
-================
-
-A brief description of what your module does.
-
-Submodules
-----------
-module
-    Description of what the submodule does.
+Kurt: A Website Crawling and Link Analysis Package
 """
 
-__version__ = "0.1.0"
-
-from .crawl_website import crawl_website
-
-def package_function():
-    """
-    Example function at the package level.
-    """
-    print("This is a package-level function.")
-
-# If you want to expose certain submodules or functions
-# directly at the package level, you can import them here
-# and list them in the __all__ variable.
+from .crawler import crawl
+from .external_links_collector import collect_external_links
+from .process_links import process_links, is_internal_link
+from .utils import no_content_extensions
+from .main import (
+    crawl_website,
+    internal_links,
+    external_links
+)
 
 __all__ = [
-    "some_function",
-    "package_function"
+    'crawl',
+    'collect_external_links',
+    'process_links',
+    'is_internal_link',
+    'no_content_extensions',
+    'crawl_website',
+    'internal_links',
+    'external_links'
 ]
