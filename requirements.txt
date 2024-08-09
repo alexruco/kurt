@@ -1,1 +1,3 @@
 hellen @ git+https://github.com/alexruco/hellen.git#egg=hellen
+virginia @ git+https://github.com/someuser/virginia.git#egg=virginia
+dourado @ git+https://github.com/alexruco/dourado.git#egg=dourado

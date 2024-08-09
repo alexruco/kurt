@@ -1,5 +1,7 @@
 import json
 from kurt.process_links import process_links, is_internal_link
+from dourado import pages_from_sitemaps, consolidate_sitemaps
+from virginia import check_page_availability
 
 def crawl(url, depth, max_depth, crawled):
     """
@@ -53,16 +55,42 @@ def crawl_website(base_url, max_depth):
     crawl(base_url, 1, max_depth, crawled)
     return crawled
 
+def sitemap_crawl(base_url, max_depth):
+    """
+    Crawl the website using sitemaps to discover internal links and their sitemaps.
+
+    Parameters:
+    base_url (str): The base URL to start crawling from.
+    max_depth (int): The maximum depth to crawl.
+
+    Returns:
+    dict: A dictionary where each link is a key with its properties, internal links discovered, and sitemaps discovered.
+    """
+    crawled = {}
+    sitemaps = pages_from_sitemaps(base_url)
+    
+    for sitemap_url, links in sitemaps:
+        if sitemap_url not in crawled:
+            crawled[sitemap_url] = {
+                "internal_link_discovered": [],
+                "sitemap_discovered": sitemap_url,
+                "depth": 0  # Initialize depth
+            }
+        internal_crawled = crawl(sitemap_url, 1, max_depth, {})
+        crawled[sitemap_url]["internal_link_discovered"].extend(internal_crawled.keys())
+        crawled[sitemap_url]["depth"] = 1  # Set depth after crawling
+
+    return crawled
+
 # Example usage
 if __name__ == "__main__":
     base_url = 'https://smileup.pt'
     max_depth = 2
-    crawled_data = crawl_website(base_url, max_depth)
+    crawled_data = sitemap_crawl(base_url, max_depth)
     
     # Print the crawled data
     for link, info in crawled_data.items():
         print(f"Link: {link}")
-        print(f"  Availability: {info['availability']}")
-        print(f"  Is Internal: {info['is_internal']}")
-        print(f"  Found in: {info['found_in']}")
+        print(f"  Internal Links Discovered: {info['internal_link_discovered']}")
+        print(f"  Sitemap Discovered: {info['sitemap_discovered']}")
         print(f"  Depth: {info['depth']}")

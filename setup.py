@@ -7,6 +7,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         'hellen @ git+https://github.com/alexruco/hellen.git#egg=hellen',
+        'virginia @ git+https://github.com/someuser/virginia.git#egg=virginia',
+        'dourado @ git+https://github.com/alexruco/dourado.git#egg=dourado'
     ],
     entry_points={
         'console_scripts': [
@@ -15,7 +17,7 @@ setup(
     },
     author='Alex Ruco',
     author_email='alex@ruco.pt',
-    description='A module for processing web links using hellen',
+    description='A module for processing web links using hellen, virginia, and dourado',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/alexruco/kurt',
