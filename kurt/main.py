@@ -1,3 +1,4 @@
+#kurt/main.py
 from kurt.crawler import crawl
 
 def crawl_website(base_url, max_depth):
@@ -19,7 +20,7 @@ def crawl_website(base_url, max_depth):
 # Example usage
 if __name__ == "__main__":
     base_url = 'https://mysitefaster.com'
-    max_depth = 2
+    max_depth = 10
     crawled_data, external_links_info = crawl_website(base_url, max_depth)
     
     # Print the crawled data

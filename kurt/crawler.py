@@ -1,3 +1,5 @@
+# kurt/crawler.py
+
 from kurt.process_links import process_links, is_internal_link
 from virginia import check_page_availability
 from kurt.external_links_collector import collect_external_links
@@ -23,19 +25,23 @@ def crawl(url, depth, max_depth, crawled, external_links_info):
         return crawled, external_links_info
     
     if url in crawled:
-        print(f"Skipping already crawled URL: {url}")
+        # If already crawled, just update the "found_in" list and return
+        print(f"Updating 'found_in' for already crawled URL: {url}")
+        crawled[url]["found_in"].append(url)
         return crawled, external_links_info
     
+    # Process the links on this URL
     base_url, result_links = process_links(url)
     print(f"Processed {len(result_links)} links from {url}")
 
     if not result_links or result_links == "ERROR: base url unavailable":
         return crawled, external_links_info
 
+    # Mark this URL as crawled
     crawled[url] = {
         "availability": check_page_availability(url),
         "is_internal": is_internal_link(base_url, url),
-        "found_in": [base_url],
+        "found_in": [url],
         "depth": depth
     }
 
@@ -49,6 +55,7 @@ def crawl(url, depth, max_depth, crawled, external_links_info):
             print(f"Recursively crawling internal link: {link}")
             crawl(link, depth + 1, max_depth, crawled, external_links_info)
         else:
-            print(f"Skipping link: {link} (already crawled)")
+            print(f"Updating 'found_in' for already crawled URL: {link}")
+            crawled[link]["found_in"].append(url)  # Update "found_in" with current URL
 
     return crawled, external_links_info
