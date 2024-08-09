@@ -50,12 +50,16 @@ def crawl(url, depth, max_depth, crawled, external_links_info):
     
     for link_info in result_links:
         link = link_info['url']
-        
-        if link not in crawled:
-            print(f"Recursively crawling internal link: {link}")
-            crawl(link, depth + 1, max_depth, crawled, external_links_info)
+        is_internal = link_info['is_internal']
+
+        if is_internal:
+            if link not in crawled:
+                print(f"Recursively crawling internal link: {link}")
+                crawl(link, depth + 1, max_depth, crawled, external_links_info)
+            else:
+                print(f"Updating 'found_in' for already crawled URL: {link}")
+                crawled[link]["found_in"].append(url)  # Update "found_in" with current URL
         else:
-            print(f"Updating 'found_in' for already crawled URL: {link}")
-            crawled[link]["found_in"].append(url)  # Update "found_in" with current URL
+            print(f"Skipping external link: {link} (not crawled)")
 
     return crawled, external_links_info
